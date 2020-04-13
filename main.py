@@ -14,7 +14,7 @@ level1 = l.Level()
 menu = l.Menu()
 menu.display()
 perso = p.Player(level1)
-boss = p.BadGuy(level1)
+boss = p.BadGuy(level1, perso)
 pygame.display.flip()
 
 Menu = True
@@ -35,6 +35,7 @@ while keepGoing:
 					perso.stats()
 					pygame.display.flip()
 	while Level1 and not perso.dead:
+		boss.scan()
 		for event in pygame.event.get():
 			if event.type == QUIT:
 				keepGoing = False

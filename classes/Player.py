@@ -192,9 +192,11 @@ class Player():
 
 class BadGuy(Player):
 	"""docstring for BadGuy"""
-	def __init__(self, level):
+	def __init__(self, level, player):
 		super(BadGuy, self).__init__(level)
 		self.level.badguy = self
+		self.weapon = w.BossWeapon(self, player)
+		self.player = player
 		self.sprites = [
 			pygame.image.load("assets/FinalBoss/Left.png").convert_alpha(),
 			pygame.image.load("assets/FinalBoss/Right.png").convert_alpha()
@@ -207,4 +209,45 @@ class BadGuy(Player):
 		self.rect = self.current_sprite.get_rect().move(475, 330)
 		self.case_x = 16
 		self.case_y = 15
+	
+	def Attack(self, direction):
+		self.weapon.attack(direction)
+
+	def scan(self):
+		temp_x = self.case_x
+		temp_y = self.case_y
+		for i in range(5):
+			self.rect.move(30, 0)
+			temp_x += 30
+			if self.rect.colliderect(self.player.rect):
+				self.rect.move((self.case_x - temp_x) * c.SPRITE_SIZE ,0)
+				self.Attack("right")
+				break
+		temp_x = self.case_x
+		temp_y = self.case_y
+		for i in range(5):
+			self.rect.move(-30, 0)
+			temp_x -= 30
+			if self.rect.colliderect(self.player.rect):
+				self.rect.move((self.case_x - temp_x) * c.SPRITE_SIZE ,0)
+				self.Attack("left")
+				break
+		temp_x = self.case_x
+		temp_y = self.case_y
+		for i in range(5):
+			self.rect.move(0, 30)
+			temp_y += 30
+			if self.rect.colliderect(self.player.rect):
+				self.rect.move((self.case_y - temp_y) * c.SPRITE_SIZE ,0)
+				self.Attack("bottom")
+				break
+		temp_x = self.case_x
+		temp_y = self.case_y
+		for i in range(5):
+			self.rect.move(0, 30)
+			temp_y -= 30
+			if self.rect.colliderect(self.player.rect):
+				self.rect.move((self.case_y - temp_y) * c.SPRITE_SIZE ,0)
+				self.Attack("top")
+				break
 		
