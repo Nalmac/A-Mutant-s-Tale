@@ -81,9 +81,10 @@ class Weapon():
 
 class BossWeapon(Weapon):
 	"""docstring for BossWeapon"""
-	def __init__(self, player, target):
-		super(BossWeapon, self).__init__(player)
+	def __init__(self, boss, target):
+		super(BossWeapon, self).__init__(boss)
 		self.target = target
+		self.boss = boss
 		self.sprites = [
 			pygame.image.load("assets/FinalBoss/Weapon/Right.png").convert_alpha(),
 			pygame.image.load("assets/FinalBoss/Weapon/Left.png").convert_alpha(),
@@ -92,7 +93,8 @@ class BossWeapon(Weapon):
 		]
 
 		self.current_sprite = 0
-		self.rect.move(self.player.case_x * c.SPRITE_SIZE - self.x, self.player.case_y * c.SPRITE_SIZE - self.y)
+		self.rect = self.boss.rect
+		#self.rect.move(case_x  * c.SPRITE_SIZE, case_y * c.SPRITE_SIZE)
 
 	def attack(self, direction):
 		for i in range(5):
@@ -126,19 +128,19 @@ class BossWeapon(Weapon):
 					
 
 			self.level.display()
-			self.level.window.blit(self.player.current_sprite, self.player.rect)
+			self.level.window.blit(self.boss.current_sprite, self.boss.rect)
 			self.level.window.blit(self.target.current_sprite, self.target.rect)
 			self.level.window.blit(self.current_sprite, self.rect)
-			self.player.stats()
+			self.target.stats()
 
 			if self.rect.colliderect(self.target.rect):
-				self.target.damage(self.attack)
+				self.target.damage(self.boss.attack)
 				print(self.target.health)
 				print("attack")
 				break
 
-		delta_y = c.SPRITE_SIZE * (self.player.case_y - self.case_y) 		
-		delta_x = c.SPRITE_SIZE * (self.player.case_x - self.case_x)
+		delta_y = c.SPRITE_SIZE * (self.boss.case_y - self.case_y) 		
+		delta_x = c.SPRITE_SIZE * (self.boss.case_x - self.case_x)
 		self.rect = self.rect.move(delta_x, delta_y)
 
 		self.case_x += int(delta_x / c.SPRITE_SIZE)

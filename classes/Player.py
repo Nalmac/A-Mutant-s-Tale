@@ -190,12 +190,14 @@ class Player():
 		self.stats()
 		pygame.display.flip()
 
-	def damage(self, damage):
+	def damage(self, dmg):
 		if self.stamina > 0:
-			damage -= 2
-			stamina -= 1
-		if damage >= 0:
-			self.health -= damage
+			dmg -= 2
+			self.stamina -= 1
+		if dmg >= 0:
+			self.health -= dmg
+		if self.health <= 0:
+			self.dead = False
 		self.stats()
 
 class BadGuy(Player):
@@ -217,6 +219,7 @@ class BadGuy(Player):
 		self.case_y = 15
 		self.rect = self.current_sprite.get_rect().move(self.case_x * c.SPRITE_SIZE, self.case_y * c.SPRITE_SIZE)
 		self.weapon = w.BossWeapon(self, self.player)
+		print(self.weapon.x, self.weapon.y)
 		self.stamina = c.B_STAMINA
 		self.attack = c.B_ATTACK
 		self.health = c.B_HEALTH
