@@ -190,12 +190,19 @@ class Player():
 		self.stats()
 		pygame.display.flip()
 
+	def damage(self, damage):
+		if self.stamina > 0:
+			damage -= 2
+			stamina -= 1
+		if damage >= 0:
+			self.health -= damage
+		self.stats()
+
 class BadGuy(Player):
 	"""docstring for BadGuy"""
 	def __init__(self, level, player):
 		super(BadGuy, self).__init__(level)
 		self.level.badguy = self
-		self.weapon = w.BossWeapon(self, player)
 		self.player = player
 		self.sprites = [
 			pygame.image.load("assets/FinalBoss/Left.png").convert_alpha(),
@@ -206,48 +213,39 @@ class BadGuy(Player):
 			pygame.image.load("assets/FinalBoss/Right_Powermode.png").convert_alpha()
 		]
 		self.current_sprite = self.sprites[0]
-		self.rect = self.current_sprite.get_rect().move(475, 330)
 		self.case_x = 16
 		self.case_y = 15
+		self.rect = self.current_sprite.get_rect().move(self.case_x * c.SPRITE_SIZE, self.case_y * c.SPRITE_SIZE)
+		self.weapon = w.BossWeapon(self, self.player)
+		self.stamina = c.B_STAMINA
+		self.attack = c.B_ATTACK
+		self.health = c.B_HEALTH
 	
 	def Attack(self, direction):
 		self.weapon.attack(direction)
+		self.player.stats()
 
 	def scan(self):
-		temp_x = self.case_x
-		temp_y = self.case_y
-		for i in range(5):
-			self.rect.move(30, 0)
-			temp_x += 30
-			if self.rect.colliderect(self.player.rect):
-				self.rect.move((self.case_x - temp_x) * c.SPRITE_SIZE ,0)
-				self.Attack("right")
-				break
-		temp_x = self.case_x
-		temp_y = self.case_y
-		for i in range(5):
-			self.rect.move(-30, 0)
-			temp_x -= 30
-			if self.rect.colliderect(self.player.rect):
-				self.rect.move((self.case_x - temp_x) * c.SPRITE_SIZE ,0)
-				self.Attack("left")
-				break
-		temp_x = self.case_x
-		temp_y = self.case_y
-		for i in range(5):
-			self.rect.move(0, 30)
-			temp_y += 30
-			if self.rect.colliderect(self.player.rect):
-				self.rect.move((self.case_y - temp_y) * c.SPRITE_SIZE ,0)
-				self.Attack("bottom")
-				break
-		temp_x = self.case_x
-		temp_y = self.case_y
-		for i in range(5):
-			self.rect.move(0, 30)
-			temp_y -= 30
-			if self.rect.colliderect(self.player.rect):
-				self.rect.move((self.case_y - temp_y) * c.SPRITE_SIZE ,0)
-				self.Attack("top")
-				break
+		print('scan')
+		delta_x = c.SPRITE_SIZE * (self.player.case_x - self.case_x)
+		delta_y = c.SPRITE_SIZE * (self.player.case_y - self.case_y)
+		maxNeg = -5 * c.SPRITE_SIZE
+		maxPos = 5 * c.SPRITE_SIZE
+		print(delta_y)
+		print(maxPos)
+		print(maxNeg)
+		print(delta_x)
+		print(maxNeg <= delta_x)
+
+		if delta_x == 0 and delta_y < 0 and delta_y >= maxNeg:
+			self.Attack("top")
+		elif delta_x == 0 and delta_y > 0 and delta_y <= maxPos:
+			self.Attack("bottom")
+		elif delta_y == 0 and delta_x < 0 and delta_x >= maxNeg:
+			self.Attack("left")
+		elif delta_y == 0 and delta_x > 0 and delta_x <= maxPos:
+			self.Attack("right")
+		else:
+			if not self.powermode:
+				self.powermodeToggle()
 		

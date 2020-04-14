@@ -84,42 +84,57 @@ class BossWeapon(Weapon):
 	def __init__(self, player, target):
 		super(BossWeapon, self).__init__(player)
 		self.target = target
+		self.sprites = [
+			pygame.image.load("assets/FinalBoss/Weapon/Right.png").convert_alpha(),
+			pygame.image.load("assets/FinalBoss/Weapon/Left.png").convert_alpha(),
+			pygame.image.load("assets/FinalBoss/Weapon/Top.png").convert_alpha(),
+			pygame.image.load("assets/FinalBoss/Weapon/Bottom.png").convert_alpha()
+		]
+
+		self.current_sprite = 0
+		self.rect.move(self.player.case_x * c.SPRITE_SIZE - self.x, self.player.case_y * c.SPRITE_SIZE - self.y)
 
 	def attack(self, direction):
 		for i in range(5):
 			if direction == "right":
+				self.current_sprite = self.sprites[0]
 				if self.case_x + 1 <= 30 and self.level.walls[self.case_y][self.case_x + 1] != "R":
 					time.sleep(0.2)
 					self.rect = self.rect.move(c.SPRITE_SIZE, 0)
 					self.case_x += 1
+					
 			if direction == "left":
+				self.current_sprite = self.sprites[1]
 				if self.case_x - 1 >= 0 and self.level.walls[self.case_y][self.case_x - 1] != "R":
 					time.sleep(0.2)
 					self.rect = self.rect.move(-c.SPRITE_SIZE, 0)
 					self.case_x -= 1
+					
 			if direction == "top":
+				self.current_sprite = self.sprites[2]
 				if self.case_y - 1 >= 0 and self.level.walls[self.case_y - 1][self.case_x] != "R":
 					time.sleep(0.2)
 					self.rect = self.rect.move(0, -c.SPRITE_SIZE)
 					self.case_y -= 1
-				else:
-					break
-			if direction == "bottom" and self.level.walls[self.case_y + 1][self.case_x] != "R":
-				time.sleep(0.2)
-				if self.case_y + 1 <= 20:
+					
+			if direction == "bottom":
+				self.current_sprite = self.sprites[3]
+				if self.case_y + 1 <= 20 and self.level.walls[self.case_y + 1][self.case_x] != "R":
+					time.sleep(0.2)
 					self.rect = self.rect.move(0, c.SPRITE_SIZE)
 					self.case_y += 1
-			self.current_sprite = self.sprites[i] if i - 3 <= 0 else self.sprites[i - 3]
+					
 
 			self.level.display()
 			self.level.window.blit(self.player.current_sprite, self.player.rect)
 			self.level.window.blit(self.target.current_sprite, self.target.rect)
-			self.player.stats()
 			self.level.window.blit(self.current_sprite, self.rect)
-			pygame.display.flip()
+			self.player.stats()
 
 			if self.rect.colliderect(self.target.rect):
-				self.target.health -= self.player.attack
+				self.target.damage(self.attack)
+				print(self.target.health)
+				print("attack")
 				break
 
 		delta_y = c.SPRITE_SIZE * (self.player.case_y - self.case_y) 		
@@ -131,4 +146,5 @@ class BossWeapon(Weapon):
 		self.level.display()
 		self.player.stats()
 		self.level.window.blit(self.player.current_sprite, self.player.rect)
+		self.level.window.blit(self.target.current_sprite, self.target.rect)
 		pygame.display.flip()

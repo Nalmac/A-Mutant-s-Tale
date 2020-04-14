@@ -35,7 +35,6 @@ while keepGoing:
 					perso.stats()
 					pygame.display.flip()
 	while Level1 and not perso.dead:
-		boss.scan()
 		for event in pygame.event.get():
 			if event.type == QUIT:
 				keepGoing = False
@@ -59,3 +58,4 @@ while keepGoing:
 					perso.Attack("right")
 				if event.key == K_s:
 					perso.Attack("bottom")
+				boss.scan()
