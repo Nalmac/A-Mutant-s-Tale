@@ -9,10 +9,10 @@ pygame.init()
 
 import classes.Player as p
 import classes.Level as l
+import threading as t
 
 level1 = l.Level()
 menu = l.Menu()
-menu.display()
 perso = p.Player(level1)
 boss = p.BadGuy(level1, perso)
 pygame.display.flip()
@@ -22,6 +22,8 @@ Level1 = True
 keepGoing = True
 while keepGoing:
 	while Menu:
+		menu.display()
+		pygame.display.flip()
 		for event in pygame.event.get():
 			if event.type == QUIT:
 				keepGoing = False
@@ -34,7 +36,7 @@ while keepGoing:
 					level1.window.blit(perso.current_sprite, perso.rect)
 					perso.stats()
 					pygame.display.flip()
-	while Level1 and not perso.dead:
+	while Level1 and perso.alive:
 		for event in pygame.event.get():
 			if event.type == QUIT:
 				keepGoing = False
@@ -51,11 +53,16 @@ while keepGoing:
 				if event.key == K_a:
 					perso.arm()
 				if event.key == K_z:
-					perso.Attack("top")
+					t.Thread(target=perso.Attack, args=("top",)).start()
 				if event.key == K_q:
-					perso.Attack("left")
+					t.Thread(target=perso.Attack, args=("left",)).start()
 				if event.key == K_d:
-					perso.Attack("right")
+					t.Thread(target=perso.Attack, args=("right",)).start()
 				if event.key == K_s:
-					perso.Attack("bottom")
+					t.Thread(target=perso.Attack, args=("right",)).start()
+				if event.key == K_p:
+					t.Thread(target=perso.powermodeToggle).start()
+				if event.key == K_SPACE:
+					perso.ult()
 				boss.scan()
+	break

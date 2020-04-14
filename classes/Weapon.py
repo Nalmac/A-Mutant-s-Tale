@@ -20,6 +20,7 @@ class Weapon():
 		self.x = c.SPRITE_SIZE * self.case_x
 		self.y = c.SPRITE_SIZE * self.case_y
 		self.rect.move(self.x, self.y)
+		self.attacking = False
 
 	def move(self, x, y):
 		self.rect = self.rect.move(x, y)
@@ -33,6 +34,7 @@ class Weapon():
 			self.case_y += 1
 	
 	def attack(self, direction):
+		self.attacking = True
 		for i in range(5):
 			if direction == "right":
 				if self.case_x + 1 <= 30 and self.level.walls[self.case_y][self.case_x + 1] != "R":
@@ -66,11 +68,13 @@ class Weapon():
 
 			if self.rect.colliderect(self.player.level.badguy.rect):
 				self.player.level.badguy.health -= self.player.attack
+				self.player.stamina += 1 if self.player.stamina < 5 else 0
 				break
 
 		delta_y = c.SPRITE_SIZE * (self.player.case_y - self.case_y) 		
 		delta_x = c.SPRITE_SIZE * (self.player.case_x - self.case_x)
 		self.rect = self.rect.move(delta_x, delta_y)
+		self.attacking = False
 
 		self.case_x += int(delta_x / c.SPRITE_SIZE)
 		self.case_y += int(delta_y / c.SPRITE_SIZE)
@@ -97,56 +101,59 @@ class BossWeapon(Weapon):
 		#self.rect.move(case_x  * c.SPRITE_SIZE, case_y * c.SPRITE_SIZE)
 
 	def attack(self, direction):
-		for i in range(5):
-			if direction == "right":
-				self.current_sprite = self.sprites[0]
-				if self.case_x + 1 <= 30 and self.level.walls[self.case_y][self.case_x + 1] != "R":
-					time.sleep(0.2)
-					self.rect = self.rect.move(c.SPRITE_SIZE, 0)
-					self.case_x += 1
-					
-			if direction == "left":
-				self.current_sprite = self.sprites[1]
-				if self.case_x - 1 >= 0 and self.level.walls[self.case_y][self.case_x - 1] != "R":
-					time.sleep(0.2)
-					self.rect = self.rect.move(-c.SPRITE_SIZE, 0)
-					self.case_x -= 1
-					
-			if direction == "top":
-				self.current_sprite = self.sprites[2]
-				if self.case_y - 1 >= 0 and self.level.walls[self.case_y - 1][self.case_x] != "R":
-					time.sleep(0.2)
-					self.rect = self.rect.move(0, -c.SPRITE_SIZE)
-					self.case_y -= 1
-					
-			if direction == "bottom":
-				self.current_sprite = self.sprites[3]
-				if self.case_y + 1 <= 20 and self.level.walls[self.case_y + 1][self.case_x] != "R":
-					time.sleep(0.2)
-					self.rect = self.rect.move(0, c.SPRITE_SIZE)
-					self.case_y += 1
-					
+		if self.boss.display and self.level.time:
+			self.attacking = True
+			for i in range(5):
+				if direction == "right":
+					self.current_sprite = self.sprites[0]
+					if self.case_x + 1 <= 30 and self.level.walls[self.case_y][self.case_x + 1] != "R":
+						time.sleep(0.2)
+						self.rect = self.rect.move(c.SPRITE_SIZE, 0)
+						self.case_x += 1
+						
+				if direction == "left":
+					self.current_sprite = self.sprites[1]
+					if self.case_x - 1 >= 0 and self.level.walls[self.case_y][self.case_x - 1] != "R":
+						time.sleep(0.2)
+						self.rect = self.rect.move(-c.SPRITE_SIZE, 0)
+						self.case_x -= 1
+						
+				if direction == "top":
+					self.current_sprite = self.sprites[2]
+					if self.case_y - 1 >= 0 and self.level.walls[self.case_y - 1][self.case_x] != "R":
+						time.sleep(0.2)
+						self.rect = self.rect.move(0, -c.SPRITE_SIZE)
+						self.case_y -= 1
+						
+				if direction == "bottom":
+					self.current_sprite = self.sprites[3]
+					if self.case_y + 1 <= 20 and self.level.walls[self.case_y + 1][self.case_x] != "R":
+						time.sleep(0.2)
+						self.rect = self.rect.move(0, c.SPRITE_SIZE)
+						self.case_y += 1
+						
 
+				self.level.display()
+				self.level.window.blit(self.boss.current_sprite, self.boss.rect)
+				self.level.window.blit(self.target.current_sprite, self.target.rect)
+				self.level.window.blit(self.current_sprite, self.rect)
+				self.target.stats()
+
+				if self.rect.colliderect(self.target.rect):
+					self.target.damage(self.boss.attack)
+					print(self.target.health)
+					print("attack")
+					break
+
+			delta_y = c.SPRITE_SIZE * (self.boss.case_y - self.case_y) 		
+			delta_x = c.SPRITE_SIZE * (self.boss.case_x - self.case_x)
+			self.rect = self.rect.move(delta_x, delta_y)
+			self.attacking = False
+
+			self.case_x += int(delta_x / c.SPRITE_SIZE)
+			self.case_y += int(delta_y / c.SPRITE_SIZE)
 			self.level.display()
-			self.level.window.blit(self.boss.current_sprite, self.boss.rect)
+			self.player.stats()
+			self.level.window.blit(self.player.current_sprite, self.player.rect)
 			self.level.window.blit(self.target.current_sprite, self.target.rect)
-			self.level.window.blit(self.current_sprite, self.rect)
-			self.target.stats()
-
-			if self.rect.colliderect(self.target.rect):
-				self.target.damage(self.boss.attack)
-				print(self.target.health)
-				print("attack")
-				break
-
-		delta_y = c.SPRITE_SIZE * (self.boss.case_y - self.case_y) 		
-		delta_x = c.SPRITE_SIZE * (self.boss.case_x - self.case_x)
-		self.rect = self.rect.move(delta_x, delta_y)
-
-		self.case_x += int(delta_x / c.SPRITE_SIZE)
-		self.case_y += int(delta_y / c.SPRITE_SIZE)
-		self.level.display()
-		self.player.stats()
-		self.level.window.blit(self.player.current_sprite, self.player.rect)
-		self.level.window.blit(self.target.current_sprite, self.target.rect)
-		pygame.display.flip()
+			pygame.display.flip()

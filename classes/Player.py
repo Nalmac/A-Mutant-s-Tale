@@ -5,6 +5,7 @@ pygame.init()
 import classes.constants as c
 import classes.Weapon as w
 import time
+import threading as t
 
 class Player():
 	"""docstring for Player"""
@@ -16,7 +17,8 @@ class Player():
 		self.stamina = c.STAMINA
 		self.exp = 0
 		self.armed = False
-		self.dead = False
+		self.alive = True
+		self.display = True
 
 		self.health_sprites = [
 			pygame.image.load("assets/player/health/health_full.png").convert_alpha(),
@@ -55,12 +57,28 @@ class Player():
 
 		self.level.window.blit(self.current_sprite, self.rect)
 
+	def ult(self):
+		if self.level.time:
+			if self.powermode:
+				self.level.time = False
+			else:
+				t.Thread(target=self.powermodeToggle).start()
+				self.level.time = False
+			self.stamina -= 5
+		else:
+			self.level.time = True
+
+
 	def powermodeToggle(self):
 		if not self.powermode:
 			if self.stamina == 5:
 				self.powermode = True
 				self.health += 10
 				self.attack += 10
+				for i in range(5):
+					time.sleep(1)
+					self.stamina -= 1
+				self.powermodeToggle()
 		else:
 			self.powermode = False
 			self.health = c.HEALTH
@@ -82,39 +100,37 @@ class Player():
 								x -= 30
 						if self.health == 5:
 							self.level.window.blit(self.health_sprites[1], (x, y))
-							x -= 1
+							x -= 30
 							for i in range(2):
 								self.level.window.blit(self.health_sprites[0], (x, y))
-								x -= 1
+								x -= 30
 						if self.health == 4:
 							for i in range(2):
 								self.level.window.blit(self.health_sprites[0], (x, y))
-								x -= 1
+								x -= 30
 						if self.health == 3:
 							self.level.window.blit(self.health_sprites[1], (x, y))
-							x -= 1
-							for i in range(1):
-								self.level.window.blit(self.health_sprites[0], (x, y))
-								x -= 1
+							x -= 30
+							self.level.window.blit(self.health_sprites[0], (x, y))
+							x -= 30
 						if self.health == 2:
 							self.level.window.blit(self.health_sprites[0], (x, y))
 						if self.health == 1:
 							self.level.window.blit(self.health_sprites[1], (x, y))
-						if self.health == 0:
-							self.dead = True
+						if self.health <= 0:
+							self.alive = False
+							self.display = False
 
 					if case == "s":
 						if self.stamina == 5:
 							self.level.window.blit(self.stamina_sprites[0], (x, y))
-							self.zawarudo = True
 						if self.stamina == 4:
 							self.level.window.blit(self.stamina_sprites[1], (x, y))
-							self.zawarudo = False
 						if self.stamina == 3:
 							self.level.window.blit(self.stamina_sprites[2], (x, y))
 						if self.stamina == 2:
 							self.level.window.blit(self.stamina_sprites[3], (x, y))
-						if self.stamina == 1:
+						if self.stamina == 1 or self.stamina <= 0:
 							self.level.window.blit(self.stamina_sprites[4], (x, y))
 							
 				col += 1
@@ -127,12 +143,18 @@ class Player():
 				self.rect = self.rect.move(c.SPRITE_SIZE, 0)
 				self.weapon.move(c.SPRITE_SIZE, 0)
 				self.case_x += 1
-				self.current_sprite = self.sprites[0] if not self.armed else self.sprites[2]
+				if not self.powermode:
+					self.current_sprite = self.sprites[0] if not self.armed else self.sprites[2]
+				else:
+					self.current_sprite = self.powermode_sprites[1]
 		if direction == "left":
 			if self.case_x - 1 >= 0 and self.level.walls[self.case_y][self.case_x - 1] != "R":
 				self.rect = self.rect.move(-c.SPRITE_SIZE, 0)
 				self.weapon.move(-c.SPRITE_SIZE, 0)
-				self.current_sprite = self.sprites[1] if not self.armed else self.sprites[3]
+				if not self.powermode:
+					self.current_sprite = self.sprites[1] if not self.armed else self.sprites[3]
+				else:
+					self.current_sprite = self.powermode_sprites[0]
 				self.case_x -= 1
 		if direction == "top":
 			if self.case_y - 1 >= 0 and self.level.walls[self.case_y - 1][self.case_x] != "R":
@@ -175,15 +197,15 @@ class Player():
 	#pas qu'elle attende
 	def Attack(self, direction):
 		if self.armed:
-			self.arm(2)
+			if not self.powermode : self.arm(2)
 			self.weapon.attack(direction)
-			self.arm(2)
+			if not self.powermode : self.arm(2)
 		else:
-			self.arm()
+			if not self.powermode : self.arm()
 			time.sleep(0.1)
-			self.arm(2)
+			if not self.powermode : self.arm(2)
 			self.weapon.attack(direction)
-			self.arm()
+			if not self.powermode : self.arm()
 
 		if self.stamina < 5:
 			self.stamina += 1
@@ -196,8 +218,6 @@ class Player():
 			self.stamina -= 1
 		if dmg >= 0:
 			self.health -= dmg
-		if self.health <= 0:
-			self.dead = False
 		self.stats()
 
 class BadGuy(Player):

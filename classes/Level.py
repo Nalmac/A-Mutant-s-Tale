@@ -42,7 +42,8 @@ class Level():
 						self.window.blit(self.rock, (x, y))
 				col += 1
 			ligne += 1
-		self.window.blit(self.badguy.current_sprite, self.badguy.rect)
+		if self.badguy.display:
+			self.window.blit(self.badguy.current_sprite, self.badguy.rect)
 
 class Menu(Level):
 		"""docstring for MenuLevel"""
