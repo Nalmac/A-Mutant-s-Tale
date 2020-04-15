@@ -23,6 +23,7 @@ class Level():
 		self.background = pygame.image.load("assets/levels/background.jpeg")
 		self.rock = pygame.image.load("assets/levels/Rock.png").convert_alpha()
 		self.health_hole = pygame.image.load("assets/levels/LifeHole.png").convert_alpha()
+		self.stamina_hole = pygame.image.load("assets/levels/StaminaHole.png").convert_alpha()
 		self.badguy = boss
 		self.player = player
 		self.it = 0
@@ -50,6 +51,9 @@ class Level():
 						self.window.blit(self.rock, (x, y))
 					if case == "HH":
 						self.window.blit(self.health_hole, (x, y))
+
+					if case == "SH":
+						self.window.blit(self.stamina_hole, (x, y))
 
 					if case == "Mb" and self.it == 0 and self.mob.alive:
 						self.window.blit(self.mob.current_sprite, (x, y))

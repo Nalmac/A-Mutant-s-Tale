@@ -10,6 +10,7 @@ pygame.init()
 import classes.Player as p
 import classes.Level as l
 import threading as t
+import Xlib as x
 
 level1 = l.Level()
 menu = l.Menu()
@@ -64,5 +65,5 @@ while keepGoing:
 					t.Thread(target=perso.powermodeToggle).start()
 				if event.key == K_SPACE:
 					perso.ult()
-				boss.scan()
+				t.Thread(target=boss.scan).start()
 	break
