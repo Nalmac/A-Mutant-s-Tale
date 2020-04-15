@@ -28,7 +28,7 @@ class Level():
 		self.player = player
 		self.it = 0
 		self.mob = []
-		for i in range(5): 
+		for i in range(1): 
 			self.mob.append(m.Mob(self))
 
 		self.walls = []
@@ -55,14 +55,18 @@ class Level():
 					if case == "SH":
 						self.window.blit(self.stamina_hole, (x, y))
 
-					if case == "Mb" and self.it == 0 and self.mob.alive:
-						self.window.blit(self.mob.current_sprite, (x, y))
-					elif case == "Mb" and self.it != 0 and self.mob.alive:
-						self.window.blit(self.mob.current_sprite, self.mob.rect)
+					if case.split("b")[0] == "M" and self.it == 0:
+						self.window.blit(self.mob[int(case.split("b")[1])].current_sprite, (x, y))
+						self.mob[int(case.split("b")[1])].case_y = ligne
+						self.mob[int(case.split("b")[1])].case_x = col
+					elif case.split("b")[0] == "M" and self.it != 0 and self.mob[case.split("b")[1]].alive:
+						self.window.blit(self.mob[int(case.split("b")[1])].current_sprite, self.mob[int(case.split("b")[1])].rect)
 				col += 1
 			ligne += 1
+		self.window.blit(self.player.current_sprite, self.player.rect)
 		if self.badguy.alive:
 			self.window.blit(self.badguy.current_sprite, self.badguy.rect)
+		self.player.stats()
 
 class Menu(Level):
 		"""docstring for MenuLevel"""

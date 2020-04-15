@@ -108,10 +108,10 @@ class Player():
 			self.level.display()
 			self.level.window.blit(self.current_sprite, self.rect)
 			pygame.display.flip()
-			self.stats()
 			self.level.time = True
 			self.health = c.HEALTH
 			self.attack = c.ATTACK
+			self.stats()
 
 	def stats(self):
 		ligne = 0

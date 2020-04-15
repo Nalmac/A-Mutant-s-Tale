@@ -10,6 +10,7 @@ pygame.init()
 import classes.Player as p
 import classes.Level as l
 import threading as t
+import multiprocessing as multi
 import Xlib as x
 
 level1 = l.Level()
@@ -36,13 +37,17 @@ while keepGoing:
 					level1.display()
 					level1.window.blit(perso.current_sprite, perso.rect)
 					perso.stats()
-					pygame.display.flip()
+					for mob in level1.mob:
+						t.Thread(target=mob.start).start()
 	while Level1 and perso.alive:
 		for event in pygame.event.get():
 			try:
 				if event.type == QUIT:
+					for mob in level1.mob:
+						mob.alive = False
 					keepGoing = False
 					Level1 = False
+					break
 				if event.type == KEYDOWN:
 					if event.key == K_DOWN:
 						perso.move("bottom")
@@ -78,7 +83,6 @@ while keepGoing:
 						t.Thread(target=perso.powermodeToggle).start()
 					if event.key == K_SPACE:
 						perso.ult()
-					boss.scan()
 			except Exception as e:
 				print("Erreur : " + str(e))
 	break
