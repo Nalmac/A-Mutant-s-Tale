@@ -39,31 +39,46 @@ while keepGoing:
 					pygame.display.flip()
 	while Level1 and perso.alive:
 		for event in pygame.event.get():
-			if event.type == QUIT:
-				keepGoing = False
-				Level1 = False
-			if event.type == KEYDOWN:
-				if event.key == K_RIGHT:
-					perso.move("right")
-				if event.key == K_LEFT:
-					perso.move("left")
-				if event.key == K_UP:
-					perso.move("top")
-				if event.key == K_DOWN:
-					perso.move("bottom")
-				if event.key == K_a:
-					perso.arm()
-				if event.key == K_z:
-					t.Thread(target=perso.Attack, args=("top",)).start()
-				if event.key == K_q:
-					t.Thread(target=perso.Attack, args=("left",)).start()
-				if event.key == K_d:
-					t.Thread(target=perso.Attack, args=("right",)).start()
-				if event.key == K_s:
-					t.Thread(target=perso.Attack, args=("right",)).start()
-				if event.key == K_p:
-					t.Thread(target=perso.powermodeToggle).start()
-				if event.key == K_SPACE:
-					perso.ult()
-				t.Thread(target=boss.scan).start()
+			try:
+				if event.type == QUIT:
+					keepGoing = False
+					Level1 = False
+				if event.type == KEYDOWN:
+					if event.key == K_DOWN:
+						perso.move("bottom")
+					if event.key == K_UP:
+						perso.move("top")
+					if event.key == K_LEFT:
+						perso.move("left")
+					if event.key == K_RIGHT:
+						perso.move("right")
+					if event.key == K_a:
+						t.Thread(target=perso.arm).start()
+					if event.key == K_z:
+						if not boss.attacking and not perso.attacking and not perso.moving: 
+							t.Thread(target=perso.Attack, args=("top",)).start()
+						else : 
+							perso.Attack("top") 
+					if event.key == K_q:
+						if not boss.attacking and not perso.attacking and not perso.moving: 
+							t.Thread(target=perso.Attack, args=("left",)).start()
+						else : 
+							perso.Attack("left") 
+					if event.key == K_d:
+						if not boss.attacking and not perso.attacking and not perso.moving: 
+							t.Thread(target=perso.Attack, args=("right",)).start()
+						else : 
+							perso.Attack("right") 
+					if event.key == K_s:
+						if not boss.attacking and not perso.attacking and not perso.moving: 
+							t.Thread(target=perso.Attack, args=("bottom",)).start()
+						else : 
+							perso.Attack("bottom") 
+					if event.key == K_p:
+						t.Thread(target=perso.powermodeToggle).start()
+					if event.key == K_SPACE:
+						perso.ult()
+					boss.scan()
+			except Exception as e:
+				print("Erreur : " + str(e))
 	break

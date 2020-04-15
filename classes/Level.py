@@ -32,7 +32,7 @@ class Level():
 			self.mob.append(m.Mob(self))
 
 		self.walls = []
-		with open("assets/levels/level1.txt", 'r') as file:
+		with open("assets/levels/level10.txt", 'r') as file:
 			for line in file:
 				chars = line.split(" ")
 				self.walls.append(chars)

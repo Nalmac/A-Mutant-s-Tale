@@ -18,6 +18,7 @@ class Player():
 		self.exp = 0
 		self.armed = False
 		self.alive = True
+		self.moving = False
 
 		self.health_sprites = [
 			pygame.image.load("assets/player/health/health_full.png").convert_alpha(),
@@ -49,7 +50,7 @@ class Player():
 			pygame.image.load("assets/player/health/powermode_health_full.png").convert_alpha()
 		]
 
-		for i in range(6):
+		for i in range(1, 6):
 			self.powermode_health_sprites.append(pygame.image.load("assets/player/health/powermode_health_" + str(i) + ".png").convert_alpha())
 
 		self.current_sprite = self.sprites[0]
@@ -60,6 +61,7 @@ class Player():
 		self.case_y = 0
 
 		self.weapon = w.Weapon(self)
+		self.attacking = False
 		self.level.player = self
 
 		self.level.window.blit(self.current_sprite, self.rect)
@@ -83,7 +85,7 @@ class Player():
 			if self.stamina == 5:
 				self.powermode = True
 				self.current_sprite = self.powermode_sprites[0] if self.current_sprite == self.sprites[1] or self.current_sprite == self.sprites[3] else self.powermode_sprites[1]
-				self.health += 10
+				self.health += 12
 				self.attack += 10
 				self.level.window.blit(self.current_sprite, self.rect)
 				self.stats()
@@ -149,9 +151,20 @@ class Player():
 								self.alive = False
 								self.display = False
 						else:
-							if self.health % 6:
+							if self.health % 6 == 0:
 								for i in range(int(self.health / 6)):
-									self.level.window.blit(self.powermode_health_sprites[0])
+									self.level.window.blit(self.powermode_health_sprites[0], (x, y))
+									x -= 30
+							else:
+								quot = self.health / 6
+								intQuot = int(quot)
+								rest = self.health - intQuot * 6
+
+								for i in range(intQuot):
+									self.level.window.blit(self.powermode_health_sprites[0], (x, y))
+									x -= 30
+								self.level.window.blit(self.powermode_health_sprites[rest], (x, y))
+
 
 					if case == "s":
 						if self.stamina == 5:
@@ -170,6 +183,7 @@ class Player():
 		pygame.display.flip()
 
 	def move(self, direction):
+		self.moving = True
 		if direction == "right":
 			if self.case_x + 1 <= 30 and self.level.walls[self.case_y][self.case_x + 1] != "R":
 				self.rect = self.rect.move(c.SPRITE_SIZE, 0)
@@ -220,7 +234,7 @@ class Player():
 				self.rect = self.rect.move(0, c.SPRITE_SIZE)
 				self.weapon.move(0, c.SPRITE_SIZE)
 				if self.level.walls[self.case_y + 1][self.case_x] == "HH":
-					self.health += 1
+					self.health += 1 if self.health < 6 else 0
 				if self.level.walls[self.case_y - 1][self.case_x] == "SH":
 					self.stamina += 1 if self.stamina < 5 else 0
 				self.case_y += 1
@@ -228,6 +242,7 @@ class Player():
 		self.stats()
 		self.level.window.blit(self.current_sprite, self.rect)
 		pygame.display.flip()
+		self.moving = False
 
 	def arm(self, t = 0):
 		if t == 0:	
@@ -253,6 +268,7 @@ class Player():
 	#Ici le 2 dans self.arm() importe peu, c'est juste pour signifier à la méthode qu'on ne veut
 	#pas qu'elle attende
 	def Attack(self, direction):
+		self.attacking = True
 		if self.armed:
 			if not self.powermode : self.arm(2)
 			self.weapon.attack(direction)
@@ -267,6 +283,7 @@ class Player():
 		if self.stamina < 5:
 			self.stamina += 1
 		self.stats()
+		self.attacking = False
 		pygame.display.flip()
 
 	def damage(self, dmg):
@@ -302,8 +319,10 @@ class BadGuy(Player):
 		self.health = c.B_HEALTH
 	
 	def Attack(self, direction):
+		self.attacking = True
 		self.weapon.attack(direction)
 		self.player.stats()
+		self.attacking = False
 
 	def scan(self):
 		delta_x = c.SPRITE_SIZE * (self.player.case_x - self.case_x)
@@ -312,14 +331,35 @@ class BadGuy(Player):
 		maxPos = 5 * c.SPRITE_SIZE
 
 		if delta_x == 0 and delta_y < 0 and delta_y >= maxNeg:
-			t.Thread(target=self.Attack, args=("top",)).start()
+			if not self.player.attacking and not self.player.moving:
+				thread = t.Thread(target=self.Attack, args=("top",))
+			else:
+				self.Attack("top")
+				thread = 0
 		elif delta_x == 0 and delta_y > 0 and delta_y <= maxPos:
-			t.Thread(target=self.Attack, args=("bottom",)).start()
+			if not self.player.attacking and not self.player.moving:
+				thread = t.Thread(target=self.Attack, args=("bottom",))
+			else:
+				thread = 0
+				self.Attack("bottom")
 		elif delta_y == 0 and delta_x < 0 and delta_x >= maxNeg:
-			t.Thread(target=self.Attack, args=("left",)).start()
+			self.current_sprite = self.sprites[0]
+			if not self.player.attacking and not self.player.moving:
+				thread = t.Thread(target=self.Attack, args=("left",))
+			else:
+				thread = 0
+				self.Attack("left")
 		elif delta_y == 0 and delta_x > 0 and delta_x <= maxPos:
-			t.Thread(target=self.Attack, args=("right",)).start()
+			self.current_sprite = self.sprites[1]
+			if not self.player.attacking and not self.player.moving:
+				thread = t.Thread(target=self.Attack, args=("right",))
+			else:
+				thread = 0
+				self.Attack("right")
 		else:
 			if not self.powermode:
 				self.powermodeToggle()
+			thread = 0
+		if thread != 0:
+			thread.start()
 		
