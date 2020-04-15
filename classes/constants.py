@@ -10,10 +10,12 @@ LEVEL_GRID_XY = (30, 20)
 HEALTH = 6
 ATTACK = 2
 STAMINA = 5
-SPRITES = "../assets/player/"
+
+#Mob constants
+M_HEALTH = 1
+M_ATTACK = 1
 
 #Boss constants
 B_HEALTH = 100
 B_ATTACK = 3
 B_STAMINA = 10
-B_SPRITES = "../assets/player"

@@ -101,7 +101,7 @@ class BossWeapon(Weapon):
 		#self.rect.move(case_x  * c.SPRITE_SIZE, case_y * c.SPRITE_SIZE)
 
 	def attack(self, direction):
-		if self.boss.display and self.level.time:
+		if self.boss.alive and self.level.time:
 			self.attacking = True
 			for i in range(5):
 				if direction == "right":

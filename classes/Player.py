@@ -18,7 +18,6 @@ class Player():
 		self.exp = 0
 		self.armed = False
 		self.alive = True
-		self.display = True
 
 		self.health_sprites = [
 			pygame.image.load("assets/player/health/health_full.png").convert_alpha(),
@@ -54,6 +53,7 @@ class Player():
 		self.case_y = 0
 
 		self.weapon = w.Weapon(self)
+		self.level.player = self
 
 		self.level.window.blit(self.current_sprite, self.rect)
 
