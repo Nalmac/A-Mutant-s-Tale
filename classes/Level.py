@@ -15,7 +15,7 @@ import classes.Mob as m
 #Levels classes
 class Level():
 	"""A basic level, that will eventually be used as a super class for some others"""
-	def __init__(self, boss = 0, player = 0):
+	def __init__(self, boss = 0, player = 0, number = 1):
 		self.dimensions = c.LEVEL_PIXEL_DIMENSIONS
 		self.time = True
 		self.window = pygame.display.set_mode(self.dimensions)
@@ -24,15 +24,20 @@ class Level():
 		self.rock = pygame.image.load("assets/levels/Rock.png").convert_alpha()
 		self.health_hole = pygame.image.load("assets/levels/LifeHole.png").convert_alpha()
 		self.stamina_hole = pygame.image.load("assets/levels/StaminaHole.png").convert_alpha()
+		self.bush = pygame.image.load("assets/levels/bush.png").convert_alpha()
+		self.tree = pygame.image.load("assets/levels/tree.png").convert_alpha()
+		self.portal = pygame.image.load("assets/levels/NextPortal.png").convert_alpha()
+		self.portalRect = self.portal.get_rect()
 		self.badguy = boss
 		self.player = player
 		self.it = 0
+		self.loop = True
 		self.mob = []
 		for i in range(1): 
 			self.mob.append(m.Mob(self))
 
 		self.walls = []
-		with open("assets/levels/level10.txt", 'r') as file:
+		with open("assets/levels/level" + str(number) +".txt", 'r') as file:
 			for line in file:
 				chars = line.split(" ")
 				self.walls.append(chars)
@@ -55,12 +60,25 @@ class Level():
 					if case == "SH":
 						self.window.blit(self.stamina_hole, (x, y))
 
-					if case.split("b")[0] == "M" and self.it == 0:
+					if case == "B":
+						self.window.blit(self.bush, (x, y))
+
+					if case == "T":
+						self.window.blit(self.tree, (x, y))
+					if case == "P":
+						self.portalRect == self.portalRect.move(x, y)
+						print(x, y)
+						if not self.badguy.alive:
+							self.window.blit(self.portal, self.portalRect)
+
+					if case.split("b")[0] == "M":
 						self.window.blit(self.mob[int(case.split("b")[1])].current_sprite, (x, y))
 						self.mob[int(case.split("b")[1])].case_y = ligne
 						self.mob[int(case.split("b")[1])].case_x = col
-					elif case.split("b")[0] == "M" and self.it != 0 and self.mob[case.split("b")[1]].alive:
-						self.window.blit(self.mob[int(case.split("b")[1])].current_sprite, self.mob[int(case.split("b")[1])].rect)
+						if self.it == 0:
+							self.mob[int(case.split("b")[1])].defRect(x, y)
+							self.mob[int(case.split("b")[1])].animrect = pygame.Rect((x - 30, y - 30), (c.SPRITE_SIZE * 2, c.SPRITE_SIZE * 2))
+
 				col += 1
 			ligne += 1
 		self.window.blit(self.player.current_sprite, self.player.rect)

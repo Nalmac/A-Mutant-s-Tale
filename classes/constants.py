@@ -15,6 +15,10 @@ STAMINA = 5
 M_HEALTH = 1
 M_ATTACK = 1
 
+#Officer constants
+O_HEALTH = 10
+O_ATTACK = 2
+
 #Boss constants
 B_HEALTH = 100
 B_ATTACK = 3

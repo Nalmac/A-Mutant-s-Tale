@@ -16,6 +16,8 @@ class Player():
 		self.attack = c.ATTACK
 		self.stamina = c.STAMINA
 		self.exp = 0
+		self.exp_level = 0
+		self.kills = 0
 		self.armed = False
 		self.alive = True
 		self.moving = False
@@ -66,18 +68,24 @@ class Player():
 
 		self.level.window.blit(self.current_sprite, self.rect)
 
+	def xp(self):
+		self.exp = self.kill
+		if self.exp % 20 == 0:
+			self.exp_level += 1
+
 	def ult(self):
-		if self.level.time:
-			if self.powermode:
-				self.level.time = False
-			else:
-				t.Thread(target=self.powermodeToggle).start()
+		if self.exp_level >= 5:
+			if self.level.time:
 				if self.powermode:
 					self.level.time = False
-			self.stamina -= 5
-		else:
-			self.level.time = True
-			self.powermodeToggle()
+				else:
+					t.Thread(target=self.powermodeToggle).start()
+					if self.powermode:
+						self.level.time = False
+				self.stamina -= 5
+			else:
+				self.level.time = True
+				self.powermodeToggle()
 
 
 	def powermodeToggle(self):
@@ -243,6 +251,10 @@ class Player():
 		self.level.window.blit(self.current_sprite, self.rect)
 		pygame.display.flip()
 		self.moving = False
+		self.level.player = self
+		if self.rect.colliderect(self.level.portalRect) and not self.level.badguy.alive:
+			if self.powermode : self.powermodeToggle()
+			self.level.loop = False
 
 	def arm(self, t = 0):
 		if t == 0:	

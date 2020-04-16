@@ -38,23 +38,23 @@ class Weapon():
 		for i in range(5):
 			if direction == "right":
 				if self.case_x + 1 <= 30 and self.level.walls[self.case_y][self.case_x + 1] != "R":
-					time.sleep(0.2)
+					time.sleep(0.001)
 					self.rect = self.rect.move(c.SPRITE_SIZE, 0)
 					self.case_x += 1
 			if direction == "left":
 				if self.case_x - 1 >= 0 and self.level.walls[self.case_y][self.case_x - 1] != "R":
-					time.sleep(0.2)
+					time.sleep(0.001)
 					self.rect = self.rect.move(-c.SPRITE_SIZE, 0)
 					self.case_x -= 1
 			if direction == "top":
 				if self.case_y - 1 >= 0 and self.level.walls[self.case_y - 1][self.case_x] != "R":
-					time.sleep(0.2)
+					time.sleep(0.001)
 					self.rect = self.rect.move(0, -c.SPRITE_SIZE)
 					self.case_y -= 1
 				else:
 					break
 			if direction == "bottom" and self.level.walls[self.case_y + 1][self.case_x] != "R":
-				time.sleep(0.2)
+				time.sleep(0.001)
 				if self.case_y + 1 <= 20:
 					self.rect = self.rect.move(0, c.SPRITE_SIZE)
 					self.case_y += 1
@@ -67,9 +67,13 @@ class Weapon():
 			pygame.display.flip()
 
 			if self.rect.colliderect(self.player.level.badguy.rect):
-				self.player.level.badguy.health -= self.player.attack
+				self.player.level.badguy.damage(self.player.attack)
 				self.player.stamina += 1 if self.player.stamina < 5 else 0
 				break
+			for mob in self.level.mob:
+				if self.rect.colliderect(mob.rect):
+					mob.damage(self.player.attack)
+					self.player.stamina += 1 if self.player.stamina < 5 else 0
 
 		delta_y = c.SPRITE_SIZE * (self.player.case_y - self.case_y) 		
 		delta_x = c.SPRITE_SIZE * (self.player.case_x - self.case_x)
