@@ -56,20 +56,16 @@ class Mob():
             
             delta_x = c.SPRITE_SIZE * (self.level.player.case_x - self.case_x)
             delta_y = c.SPRITE_SIZE * (self.level.player.case_y - self.case_y)
-            maxNeg = -2 * c.SPRITE_SIZE
-            maxPos = 2 * c.SPRITE_SIZE
+            maxNeg = -1 * c.SPRITE_SIZE
+            maxPos = 1 * c.SPRITE_SIZE
 
             assertY = delta_y <= maxPos and delta_y >= maxNeg
             assertX = delta_x <= maxPos and delta_x >= maxNeg
 
-            # if delta_y <= maxPos and delta_y >= maxNeg:
-            #     if delta_x <= maxPos and delta_x >= maxNeg:
-            #         if not self.attacked:
-            #             self.Attack()
-            #             print("Mob attack")
+            if delta_y <= maxPos and delta_y >= maxNeg:
+                if delta_x <= maxPos and delta_x >= maxNeg:
+                    self.Attack()
 
-            if self.rect.colliderect(self.level.player.rect):
-                self.Attack()
 
             if not assertX or not assertY:
                 self.attacked = False
@@ -78,12 +74,13 @@ class Officer(Mob):
     """Des ennemis visiblement plus costauds"""
     def __init__(self, base_x, base_y, level, rank):
         super(Officer, self).__init__(level)
-        self.assets = "assets/Officer" + str(rank)
+        self.assets = "assets/Officier" + str(rank)
         self.case_x = base_x
-        self.health = c.O_HEALTH
-        self.attack = c.O_ATTACK + rank
+        self.health = c.O_HEALTH + rank * 2
+        self.attack = c.O_ATTACK + rank * 2
         self.level = level
         self.level.badguy = self
+        self.rank = rank
         self.case_y = base_y
         self.x = self.case_x * c.SPRITE_SIZE
         self.y = self.case_y * c.SPRITE_SIZE
@@ -99,7 +96,7 @@ class Officer(Mob):
     def Attack(self):
         if self.level.time and self.alive:
             target = self.level.player
-            error = random.randint(0, 3) * c.SPRITE_SIZE
+            error = int(random.randint(0, 3) * c.SPRITE_SIZE - self.rank * c.SPRITE_SIZE)
             delta_x = (c.SPRITE_SIZE * (self.target.case_x - self.case_x)) - error
             delta_y = (c.SPRITE_SIZE * (self.target.case_y - self.case_y)) - error
 

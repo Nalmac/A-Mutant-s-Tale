@@ -66,14 +66,22 @@ class Weapon():
 			self.level.window.blit(self.current_sprite, self.rect)
 			pygame.display.flip()
 
-			if self.rect.colliderect(self.player.level.badguy.rect):
+			if self.rect.colliderect(self.player.level.badguy.rect) and self.player.level.badguy.alive:
 				self.player.level.badguy.damage(self.player.attack)
 				self.player.stamina += 1 if self.player.stamina < 5 else 0
+				self.player.kills += 1 if not self.player.level.badguy.alive else 0
+				self.player.exp += 10 if not self.player.level.badguy.alive else 0
 				break
 			for mob in self.level.mob:
-				if self.rect.colliderect(mob.rect):
+				if self.rect.colliderect(mob.rect) and mob.alive:
 					mob.damage(self.player.attack)
+					self.player.kills += 1 if not mob.alive else 0
+					self.player.exp += 2 if not mob.alive else 0
 					self.player.stamina += 1 if self.player.stamina < 5 else 0
+		if self.player.exp >= 20:
+			self.player.exp_level += 1
+			self.player.exp = 0 if self.player.exp == 20 else self.player.exp - 20
+			print(self.player.exp_level)
 
 		delta_y = c.SPRITE_SIZE * (self.player.case_y - self.case_y) 		
 		delta_x = c.SPRITE_SIZE * (self.player.case_x - self.case_x)

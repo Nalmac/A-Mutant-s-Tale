@@ -10,17 +10,27 @@ import threading as t
 class Player():
 	"""docstring for Player"""
 	def __init__(self, level):
-		self.level = level
+		self.levels = level
+		self.level_n = 0
+		self.level = self.levels[self.level_n]
 		self.powermode = False
 		self.health = c.HEALTH
 		self.attack = c.ATTACK
 		self.stamina = c.STAMINA
 		self.exp = 0
-		self.exp_level = 0
+		self.exp_level = 1
 		self.kills = 0
 		self.armed = False
 		self.alive = True
 		self.moving = False
+
+		self.xp_bar_sprites = []
+		for i in range(1,6):
+			self.xp_bar_sprites.append(pygame.image.load("assets/player/Exp/LevelBar/" + str(i) + ".png").convert_alpha())
+
+		self.xp_case_sprites = []
+		for i in range(1,6):
+			self.xp_case_sprites.append(pygame.image.load("assets/player/Exp/LevelCase/" + str(i) + ".png").convert_alpha())
 
 		self.health_sprites = [
 			pygame.image.load("assets/player/health/health_full.png").convert_alpha(),
@@ -68,13 +78,9 @@ class Player():
 
 		self.level.window.blit(self.current_sprite, self.rect)
 
-	def xp(self):
-		self.exp = self.kill
-		if self.exp % 20 == 0:
-			self.exp_level += 1
 
 	def ult(self):
-		if self.exp_level >= 5:
+		if self.exp_level >= 4:
 			if self.level.time:
 				if self.powermode:
 					self.level.time = False
@@ -89,37 +95,39 @@ class Player():
 
 
 	def powermodeToggle(self):
-		if not self.powermode:
-			if self.stamina == 5:
-				self.powermode = True
-				self.current_sprite = self.powermode_sprites[0] if self.current_sprite == self.sprites[1] or self.current_sprite == self.sprites[3] else self.powermode_sprites[1]
-				self.health += 12
-				self.attack += 10
-				self.level.window.blit(self.current_sprite, self.rect)
-				self.stats()
-				for i in range(5):
-					if self.powermode:
-						time.sleep(1)
-						self.stamina -= 1
-				t.Thread(target=self.powermodeToggle()).start()
-		else:
-			self.powermode = False
-			if not self.armed:
-				if self.current_sprite == self.powermode_sprites[1]:
-					self.current_sprite = self.sprites[0]
-				else:
-					self.current_sprite = self.sprites[1]
-			elif self.current_sprite == self.powermode_sprites[1]:
-				self.current_sprite = self.sprites[2]
+		if self.exp_level >= 2:
+			if not self.powermode:
+				if self.stamina == 5:
+					self.powermode = True
+					self.current_sprite = self.powermode_sprites[0] if self.current_sprite == self.sprites[1] or self.current_sprite == self.sprites[3] else self.powermode_sprites[1]
+					self.health += 12
+					self.attack += 10
+					self.level.window.blit(self.current_sprite, self.rect)
+					self.stats()
+					for i in range(5):
+						if self.powermode:
+							time.sleep(1)
+							self.stamina -= 1
+							self.stats()
+					t.Thread(target=self.powermodeToggle()).start()
 			else:
-				self.current_sprite = self.sprites[3]
-			self.level.display()
-			self.level.window.blit(self.current_sprite, self.rect)
-			pygame.display.flip()
-			self.level.time = True
-			self.health = c.HEALTH
-			self.attack = c.ATTACK
-			self.stats()
+				self.powermode = False
+				if not self.armed:
+					if self.current_sprite == self.powermode_sprites[1]:
+						self.current_sprite = self.sprites[0]
+					else:
+						self.current_sprite = self.sprites[1]
+				elif self.current_sprite == self.powermode_sprites[1]:
+					self.current_sprite = self.sprites[2]
+				else:
+					self.current_sprite = self.sprites[3]
+				self.level.display()
+				self.level.window.blit(self.current_sprite, self.rect)
+				pygame.display.flip()
+				self.level.time = True
+				self.health = c.HEALTH
+				self.attack = c.ATTACK
+				self.stats()
 
 	def stats(self):
 		ligne = 0
@@ -175,7 +183,7 @@ class Player():
 
 
 					if case == "s":
-						if self.stamina == 5:
+						if self.stamina >= 5:
 							self.level.window.blit(self.stamina_sprites[0], (x, y))
 						if self.stamina == 4:
 							self.level.window.blit(self.stamina_sprites[1], (x, y))
@@ -185,7 +193,31 @@ class Player():
 							self.level.window.blit(self.stamina_sprites[3], (x, y))
 						if self.stamina == 1 or self.stamina <= 0:
 							self.level.window.blit(self.stamina_sprites[4], (x, y))
-							
+					if case == "e":
+						y -= 15
+						if self.exp <= 4:
+							self.level.window.blit(self.xp_bar_sprites[0], (x, y))
+						elif self.exp <= 8:
+							self.level.window.blit(self.xp_bar_sprites[1], (x, y))
+						elif self.exp <= 12:
+							self.level.window.blit(self.xp_bar_sprites[2], (x, y))
+						elif self.exp <= 16:
+							self.level.window.blit(self.xp_bar_sprites[3], (x, y))
+						else:
+							self.level.window.blit(self.xp_bar_sprites[4], (x, y))
+
+						x -= c.SPRITE_SIZE + 20
+
+						if self.exp_level == 1:
+							self.level.window.blit(self.xp_case_sprites[0], (x, y))
+						if self.exp_level == 2:
+							self.level.window.blit(self.xp_case_sprites[1], (x, y))
+						if self.exp_level == 3:
+							self.level.window.blit(self.xp_case_sprites[2], (x, y))
+						if self.exp_level == 4:
+							self.level.window.blit(self.xp_case_sprites[3], (x, y))
+						if self.exp_level == 5:
+							self.level.window.blit(self.xp_case_sprites[4], (x, y))
 				col += 1
 			ligne += 1
 		pygame.display.flip()
@@ -198,11 +230,13 @@ class Player():
 				self.weapon.move(c.SPRITE_SIZE, 0)
 				
 
-				if self.level.walls[self.case_y][self.case_x + 1] == "HH":
+				if self.level.walls[self.case_y][self.case_x + 1] == "HH" and not self.level.disabledHoles:
 					self.health += 1 if self.health < 6 else 0
+					t.Thread(target=self.level.disableHoles).start()
 
-				if self.level.walls[self.case_y][self.case_x + 1] == "SH":
+				if self.level.walls[self.case_y][self.case_x + 1] == "SH" and not self.level.disabledHoles:
 					self.stamina += 1 if self.stamina < 5 else 0
+					t.Thread(target=self.level.disableHoles).start()
 
 				if not self.powermode:
 					self.current_sprite = self.sprites[0] if not self.armed else self.sprites[2]
@@ -218,11 +252,13 @@ class Player():
 				else:
 					self.current_sprite = self.powermode_sprites[0]
 
-				if self.level.walls[self.case_y][self.case_x - 1] == "HH":
+				if self.level.walls[self.case_y][self.case_x - 1] == "HH" and not self.level.disabledHoles:
 					self.health += 1 if self.health < 6 else 0
+					t.Thread(target=self.level.disableHoles).start()
 
-				if self.level.walls[self.case_y][self.case_x - 1] == "SH":
+				if self.level.walls[self.case_y][self.case_x - 1] == "SH" and not self.level.disabledHoles:
 					self.stamina += 1 if self.stamina < 5 else 0
+					t.Thread(target=self.level.disableHoles).start()
 
 				self.case_x -= 1
 		if direction == "top":
@@ -230,21 +266,25 @@ class Player():
 				self.rect = self.rect.move(0, -c.SPRITE_SIZE)
 				self.weapon.move(0, -c.SPRITE_SIZE)
 
-				if self.level.walls[self.case_y - 1][self.case_x] == "HH":
+				if self.level.walls[self.case_y - 1][self.case_x] == "HH" and not self.level.disabledHoles:
 					self.health += 1 if self.health < 6 else 0
+					t.Thread(target=self.level.disableHoles).start()
 
-				if self.level.walls[self.case_y - 1][self.case_x] == "SH":
+				if self.level.walls[self.case_y - 1][self.case_x] == "SH" and not self.level.disabledHoles:
 					self.stamina += 1 if self.stamina < 5 else 0
+					t.Thread(target=self.level.disableHoles).start()
 
 				self.case_y -= 1
 		if direction == "bottom" and self.level.walls[self.case_y + 1][self.case_x] != "R":
 			if self.case_y + 1 <= 20:
 				self.rect = self.rect.move(0, c.SPRITE_SIZE)
 				self.weapon.move(0, c.SPRITE_SIZE)
-				if self.level.walls[self.case_y + 1][self.case_x] == "HH":
+				if self.level.walls[self.case_y + 1][self.case_x] == "HH" and not self.level.disabledHoles:
 					self.health += 1 if self.health < 6 else 0
-				if self.level.walls[self.case_y - 1][self.case_x] == "SH":
+					t.Thread(target=self.level.disableHoles).start()
+				if self.level.walls[self.case_y - 1][self.case_x] == "SH" and not self.level.disabledHoles:
 					self.stamina += 1 if self.stamina < 5 else 0
+					t.Thread(target=self.level.disableHoles).start()
 				self.case_y += 1
 		self.level.display()
 		self.stats()
@@ -255,6 +295,10 @@ class Player():
 		if self.rect.colliderect(self.level.portalRect) and not self.level.badguy.alive:
 			if self.powermode : self.powermodeToggle()
 			self.level.loop = False
+			self.level_n += 1
+			self.level = self.levels[self.level_n]
+			self.level.player = self
+			self.weapon.level = self.level
 
 	def arm(self, t = 0):
 		if t == 0:	
