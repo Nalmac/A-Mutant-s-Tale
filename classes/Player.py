@@ -74,7 +74,6 @@ class Player():
 
 		self.weapon = w.Weapon(self)
 		self.attacking = False
-		self.level.player = self
 
 		self.level.window.blit(self.current_sprite, self.rect)
 
@@ -99,9 +98,11 @@ class Player():
 			if not self.powermode:
 				if self.stamina == 5:
 					self.powermode = True
+					if self.rect.colliderect(self.level.badguy.rect):
+						self.level.badguy.damage(self.attack)
 					self.current_sprite = self.powermode_sprites[0] if self.current_sprite == self.sprites[1] or self.current_sprite == self.sprites[3] else self.powermode_sprites[1]
 					self.health += 12
-					self.attack += 10
+					self.attack *= self.exp_level
 					self.level.window.blit(self.current_sprite, self.rect)
 					self.stats()
 					for i in range(5):
@@ -282,7 +283,7 @@ class Player():
 				if self.level.walls[self.case_y + 1][self.case_x] == "HH" and not self.level.disabledHoles:
 					self.health += 1 if self.health < 6 else 0
 					t.Thread(target=self.level.disableHoles).start()
-				if self.level.walls[self.case_y - 1][self.case_x] == "SH" and not self.level.disabledHoles:
+				if self.level.walls[self.case_y + 1][self.case_x] == "SH" and not self.level.disabledHoles:
 					self.stamina += 1 if self.stamina < 5 else 0
 					t.Thread(target=self.level.disableHoles).start()
 				self.case_y += 1
@@ -344,8 +345,10 @@ class Player():
 
 	def damage(self, dmg):
 		if self.stamina > 0:
-			dmg -= 2
-			self.stamina -= 1
+			dmg_temp = dmg - self.stamina
+			self.stamina = self.stamina - dmg
+
+			dmg = dmg_temp
 		if dmg >= 0:
 			self.health -= dmg
 		self.stats()

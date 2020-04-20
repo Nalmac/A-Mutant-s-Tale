@@ -5,6 +5,7 @@ pygame.init()
 import classes.Player as p
 import classes.constants as c
 import time
+import multiprocessing as t
 import random
 
 class Mob():
@@ -64,6 +65,7 @@ class Mob():
 
             if delta_y <= maxPos and delta_y >= maxNeg:
                 if delta_x <= maxPos and delta_x >= maxNeg:
+                    #t.Process(target=self.Attack).start()
                     self.Attack()
 
 
@@ -96,9 +98,9 @@ class Officer(Mob):
     def Attack(self):
         if self.level.time and self.alive:
             target = self.level.player
-            error = int(random.randint(0, 3) * c.SPRITE_SIZE - self.rank * c.SPRITE_SIZE)
-            delta_x = (c.SPRITE_SIZE * (self.target.case_x - self.case_x)) - error
-            delta_y = (c.SPRITE_SIZE * (self.target.case_y - self.case_y)) - error
+            error = random.randint(0, 3) * c.SPRITE_SIZE
+            delta_x = (c.SPRITE_SIZE * (self.target.case_x - self.case_x)) - (error / self.rank)
+            delta_y = (c.SPRITE_SIZE * (self.target.case_y - self.case_y)) - (error / self.rank)
 
             print(delta_x)
             print(delta_y)

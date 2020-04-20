@@ -36,8 +36,12 @@ class Level():
 		self.it = 0
 		self.loop = True
 		self.mob = []
-		for i in range(5): 
-			self.mob.append(m.Mob(self))
+		if number != 5:
+			for i in range(5): 
+				self.mob.append(m.Mob(self))
+		else:
+			for i in range(10):
+				self.mob.append(m.Mob(self))
 
 		self.walls = []
 		with open("assets/levels/level" + str(number) +".txt", 'r') as file:

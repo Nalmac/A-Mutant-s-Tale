@@ -21,5 +21,5 @@ O_ATTACK = 2
 
 #Boss constants
 B_HEALTH = 100
-B_ATTACK = 3
+B_ATTACK = 10
 B_STAMINA = 10
