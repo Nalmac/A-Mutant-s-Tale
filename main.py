@@ -305,7 +305,7 @@ while keepGoing:
 					level4.badguy.Attack()
 	while level5.loop and perso.alive:
 		for event in pygame.event.get():
-			num = random.randint(1, 15 - level5.badguy.rank)
+			num = random.randint(1, 5)
 			if event.type == QUIT:
 				for mob in level5.mob:
 					mob.alive = False
@@ -363,5 +363,6 @@ while keepGoing:
 				time.sleep(0.2)
 				if i % num == 0:
 					perso.stamina += 1 if perso.stamina < 5 else 0
-					level5.badguy.Attack()
+					level5.badguy.move()
+				level5.badguy.scan()
 	break

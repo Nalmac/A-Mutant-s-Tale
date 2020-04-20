@@ -16,7 +16,7 @@ M_HEALTH = 1
 M_ATTACK = 1
 
 #Officer constants
-O_HEALTH = 10
+O_HEALTH = 1
 O_ATTACK = 2
 
 #Boss constants

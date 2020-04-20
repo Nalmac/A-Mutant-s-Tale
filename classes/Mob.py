@@ -79,7 +79,7 @@ class Officer(Mob):
         self.assets = "assets/Officier" + str(rank)
         self.case_x = base_x
         self.health = c.O_HEALTH + rank * 2
-        self.attack = c.O_ATTACK + rank * 2
+        self.attack = c.O_ATTACK #+ rank * 2
         self.level = level
         self.level.badguy = self
         self.rank = rank

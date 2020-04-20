@@ -377,6 +377,24 @@ class BadGuy(Player):
 		self.attack = c.B_ATTACK
 		self.health = c.B_HEALTH
 	
+	def move(self):
+		print("boss moving")
+		delta_x = self.player.case_x - self.case_x
+		delta_y = c.SPRITE_SIZE * (self.player.case_y - self.case_y)
+
+		if delta_x >= 0:
+			delta_x = c.SPRITE_SIZE * (delta_x + 2)
+			self.current_sprite = self.sprites[0] if not self.powermode else self.powermode_sprites[0]
+		else:
+			delta_x = c.SPRITE_SIZE * (delta_x - 2)
+			self.current_sprite = self.sprites[1] if not self.powermode else self.powermode_sprites[1]
+		self.case_y += delta_y / c.SPRITE_SIZE
+		self.case_x += delta_x / c.SPRITE_SIZE
+		self.rect = self.rect.move(delta_x, delta_y)
+		self.level.display()
+		self.level.window.blit(self.player.current_sprite, self.player.rect)
+		self.player.stats()
+
 	def Attack(self, direction):
 		self.attacking = True
 		self.weapon.attack(direction)
