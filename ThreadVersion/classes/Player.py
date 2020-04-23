@@ -23,6 +23,7 @@ class Player():
 		self.armed = False
 		self.alive = True
 		self.moving = False
+		self.arm_sound = pygame.mixer.Sound("assets/player/sounds/arm.wav")
 
 		self.xp_bar_sprites = []
 		for i in range(1,6):
@@ -316,7 +317,7 @@ class Player():
 		else:
 			self.current_sprite = self.sprites[1]
 			self.armed = False
-
+		self.arm_sound.play()
 		self.level.display()
 		self.stats()
 		self.level.window.blit(self.current_sprite, self.rect)
