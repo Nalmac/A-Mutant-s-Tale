@@ -116,31 +116,31 @@ while keepGoing:
 				time.sleep(0.2)
 				if i % num == 0:
 					perso.stamina += 1 if perso.stamina < 5 else 0
-					level1.badguy.Attack()
+					t.Thread(target=level1.badguy.Attack).start()
 
 	
 	while level2.loop and perso.alive:
 		for event in pygame.event.get():
-			num = random.randint(1, 15 - level2.badguy.rank )
+			num = random.randint(1, 15 - level2.badguy.rank)
 			if event.type == QUIT:
 				for mob in level2.mob:
 					mob.alive = False
 				keepGoing = False
-				level2.loop = False
 				perso.alive = False
 
+				level2.loop = False
 				break
 			if event.type == KEYDOWN:
 				if event.key == K_DOWN:
-					perso.move("bottom")
+					t.Thread(target=perso.move, args=("bottom",)).start()
 				if event.key == K_UP:
-					perso.move("top")
+					t.Thread(target=perso.move, args=("top",)).start()
 				if event.key == K_LEFT:
-					perso.move("left")
+					t.Thread(target=perso.move, args=("left",)).start()
 				if event.key == K_RIGHT:
-					perso.move("right")
+					t.Thread(target=perso.move, args=("right",)).start()
 				if event.key == K_a:
-					perso.arm()
+					t.Thread(target=perso.arm).start()
 				if event.key == K_z:
 					if not perso.attacking and not perso.moving: 
 						t.Thread(target=perso.Attack, args=("top",)).start()
@@ -149,21 +149,21 @@ while keepGoing:
 						
 						perso.Attack("top") 
 				if event.key == K_q:
-					if not perso.attacking and not perso.moving: 
+					if not not perso.moving: 
 						t.Thread(target=perso.Attack, args=("left",)).start()
 						
 					else :
 						
 						perso.Attack("left") 
 				if event.key == K_d:
-					if not perso.attacking and not perso.moving: 
+					if not perso.moving: 
 						t.Thread(target=perso.Attack, args=("right",)).start()
 						
 					else : 
 						
 						perso.Attack("right") 
 				if event.key == K_s:
-					if not perso.attacking and not perso.moving: 
+					if not perso.moving: 
 						t.Thread(target=perso.Attack, args=("bottom",)).start()
 						
 					else : 
@@ -174,12 +174,12 @@ while keepGoing:
 				if event.key == K_SPACE:
 					perso.ult()
 				for mob in level2.mob:
-					mob.scan()
+					t.Thread(target=mob.scan).start()
 				i += 1
 				time.sleep(0.2)
-				if i % num == 0 or i % num <= 0.5:
+				if i % num == 0:
 					perso.stamina += 1 if perso.stamina < 5 else 0
-					level2.badguy.Attack()
+					t.Thread(target=level2.badguy.Attack).start()
 
 	while level3.loop and perso.alive:
 		for event in pygame.event.get():
@@ -194,15 +194,15 @@ while keepGoing:
 				break
 			if event.type == KEYDOWN:
 				if event.key == K_DOWN:
-					perso.move("bottom")
+					t.Thread(target=perso.move, args=("bottom",)).start()
 				if event.key == K_UP:
-					perso.move("top")
+					t.Thread(target=perso.move, args=("top",)).start()
 				if event.key == K_LEFT:
-					perso.move("left")
+					t.Thread(target=perso.move, args=("left",)).start()
 				if event.key == K_RIGHT:
-					perso.move("right")
+					t.Thread(target=perso.move, args=("right",)).start()
 				if event.key == K_a:
-					perso.arm()
+					t.Thread(target=perso.arm).start()
 				if event.key == K_z:
 					if not perso.attacking and not perso.moving: 
 						t.Thread(target=perso.Attack, args=("top",)).start()
@@ -211,21 +211,21 @@ while keepGoing:
 						
 						perso.Attack("top") 
 				if event.key == K_q:
-					if not perso.attacking and not perso.moving: 
+					if not not perso.moving: 
 						t.Thread(target=perso.Attack, args=("left",)).start()
 						
 					else :
 						
 						perso.Attack("left") 
 				if event.key == K_d:
-					if not perso.attacking and not perso.moving: 
+					if not perso.moving: 
 						t.Thread(target=perso.Attack, args=("right",)).start()
 						
 					else : 
 						
 						perso.Attack("right") 
 				if event.key == K_s:
-					if not perso.attacking and not perso.moving: 
+					if not perso.moving: 
 						t.Thread(target=perso.Attack, args=("bottom",)).start()
 						
 					else : 
@@ -236,12 +236,12 @@ while keepGoing:
 				if event.key == K_SPACE:
 					perso.ult()
 				for mob in level3.mob:
-					mob.scan()
+					t.Thread(target=mob.scan).start()
 				i += 1
 				time.sleep(0.2)
 				if i % num == 0:
 					perso.stamina += 1 if perso.stamina < 5 else 0
-					level3.badguy.Attack()
+					t.Thread(target=level3.badguy.Attack).start()
 	while level4.loop and perso.alive:
 		for event in pygame.event.get():
 			num = random.randint(1, 15 - level4.badguy.rank)
@@ -255,15 +255,15 @@ while keepGoing:
 				break
 			if event.type == KEYDOWN:
 				if event.key == K_DOWN:
-					perso.move("bottom")
+					t.Thread(target=perso.move, args=("bottom",)).start()
 				if event.key == K_UP:
-					perso.move("top")
+					t.Thread(target=perso.move, args=("top",)).start()
 				if event.key == K_LEFT:
-					perso.move("left")
+					t.Thread(target=perso.move, args=("left",)).start()
 				if event.key == K_RIGHT:
-					perso.move("right")
+					t.Thread(target=perso.move, args=("right",)).start()
 				if event.key == K_a:
-					perso.arm()
+					t.Thread(target=perso.arm).start()
 				if event.key == K_z:
 					if not perso.attacking and not perso.moving: 
 						t.Thread(target=perso.Attack, args=("top",)).start()
@@ -272,21 +272,21 @@ while keepGoing:
 						
 						perso.Attack("top") 
 				if event.key == K_q:
-					if not perso.attacking and not perso.moving: 
+					if not not perso.moving: 
 						t.Thread(target=perso.Attack, args=("left",)).start()
 						
 					else :
 						
 						perso.Attack("left") 
 				if event.key == K_d:
-					if not perso.attacking and not perso.moving: 
+					if not perso.moving: 
 						t.Thread(target=perso.Attack, args=("right",)).start()
 						
 					else : 
 						
 						perso.Attack("right") 
 				if event.key == K_s:
-					if not perso.attacking and not perso.moving: 
+					if not perso.moving: 
 						t.Thread(target=perso.Attack, args=("bottom",)).start()
 						
 					else : 
@@ -297,34 +297,34 @@ while keepGoing:
 				if event.key == K_SPACE:
 					perso.ult()
 				for mob in level4.mob:
-					mob.scan()
+					t.Thread(target=mob.scan).start()
 				i += 1
 				time.sleep(0.2)
 				if i % num == 0:
 					perso.stamina += 1 if perso.stamina < 5 else 0
-					level4.badguy.Attack()
-	while level5.loop and perso.alive:
+					t.Thread(target=level4.badguy.Attack).start()
+	while level2.loop and perso.alive:
 		for event in pygame.event.get():
-			num = random.randint(1, 5)
+			num = random.randint(1, 15 - level2.badguy.rank)
 			if event.type == QUIT:
-				for mob in level5.mob:
+				for mob in level2.mob:
 					mob.alive = False
 				keepGoing = False
 				perso.alive = False
 
-				level5.loop = False
+				level2.loop = False
 				break
 			if event.type == KEYDOWN:
 				if event.key == K_DOWN:
-					perso.move("bottom")
+					t.Thread(target=perso.move, args=("bottom",)).start()
 				if event.key == K_UP:
-					perso.move("top")
+					t.Thread(target=perso.move, args=("top",)).start()
 				if event.key == K_LEFT:
-					perso.move("left")
+					t.Thread(target=perso.move, args=("left",)).start()
 				if event.key == K_RIGHT:
-					perso.move("right")
+					t.Thread(target=perso.move, args=("right",)).start()
 				if event.key == K_a:
-					perso.arm()
+					t.Thread(target=perso.arm).start()
 				if event.key == K_z:
 					if not perso.attacking and not perso.moving: 
 						t.Thread(target=perso.Attack, args=("top",)).start()
@@ -333,21 +333,21 @@ while keepGoing:
 						
 						perso.Attack("top") 
 				if event.key == K_q:
-					if not perso.attacking and not perso.moving: 
+					if not not perso.moving: 
 						t.Thread(target=perso.Attack, args=("left",)).start()
 						
 					else :
 						
 						perso.Attack("left") 
 				if event.key == K_d:
-					if not perso.attacking and not perso.moving: 
+					if not perso.moving: 
 						t.Thread(target=perso.Attack, args=("right",)).start()
 						
 					else : 
 						
 						perso.Attack("right") 
 				if event.key == K_s:
-					if not perso.attacking and not perso.moving: 
+					if not perso.moving: 
 						t.Thread(target=perso.Attack, args=("bottom",)).start()
 						
 					else : 
@@ -357,12 +357,11 @@ while keepGoing:
 					t.Thread(target=perso.powermodeToggle).start()
 				if event.key == K_SPACE:
 					perso.ult()
-				for mob in level5.mob:
-					mob.scan()
+				for mob in level2.mob:
+					t.Thread(target=mob.scan).start()
 				i += 1
 				time.sleep(0.2)
 				if i % num == 0:
 					perso.stamina += 1 if perso.stamina < 5 else 0
-					level5.badguy.move()
-				level5.badguy.scan()
+					t.Thread(target=level2.badguy.Attack).start()
 	break
