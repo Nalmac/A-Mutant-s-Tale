@@ -24,6 +24,8 @@ class Player():
 		self.alive = True
 		self.moving = False
 		self.arm_sound = pygame.mixer.Sound("assets/player/sounds/arm.wav")
+		self.attack_sound = pygame.mixer.Sound("assets/player/sounds/attack.wav")
+		self.ult_sound = pygame.mixer.Sound("assets/player/sounds/ult.wav")
 
 		self.xp_bar_sprites = []
 		for i in range(1,6):
@@ -80,6 +82,7 @@ class Player():
 
 
 	def ult(self):
+		self.ult_sound.play()
 		if self.exp_level >= 4:
 			if self.level.time:
 				if self.powermode:
@@ -317,7 +320,6 @@ class Player():
 		else:
 			self.current_sprite = self.sprites[1]
 			self.armed = False
-		self.arm_sound.play()
 		self.level.display()
 		self.stats()
 		self.level.window.blit(self.current_sprite, self.rect)
@@ -328,12 +330,14 @@ class Player():
 	def Attack(self, direction):
 		self.attacking = True
 		if self.armed:
+			self.attack_sound.play()
 			if not self.powermode : self.arm(2)
 			self.weapon.attack(direction)
 			if not self.powermode : self.arm(2)
 		else:
 			if not self.powermode : self.arm()
 			time.sleep(0.1)
+			self.attack_sound.play()
 			if not self.powermode : self.arm(2)
 			self.weapon.attack(direction)
 			if not self.powermode : self.arm()

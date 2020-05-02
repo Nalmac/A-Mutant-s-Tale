@@ -40,6 +40,9 @@ pygame.display.flip()
 Menu = True
 keepGoing = True
 i = 0
+pygame.mixer.music.load("assets/levels/music.wav")
+pygame.mixer.music.play()
+pygame.mixer.music.set_volume(0.5)
 while keepGoing:
 	while Menu:
 		menu.display()
@@ -78,6 +81,7 @@ while keepGoing:
 					t.Thread(target=perso.move, args=("right",)).start()
 				if event.key == K_a:
 					t.Thread(target=perso.arm).start()
+					perso.arm_sound.play()
 				if event.key == K_z:
 					if not perso.attacking and not perso.moving: 
 						t.Thread(target=perso.Attack, args=("top",)).start()
@@ -141,6 +145,7 @@ while keepGoing:
 					t.Thread(target=perso.move, args=("right",)).start()
 				if event.key == K_a:
 					t.Thread(target=perso.arm).start()
+					perso.arm_sound.play()
 				if event.key == K_z:
 					if not perso.attacking and not perso.moving: 
 						t.Thread(target=perso.Attack, args=("top",)).start()
@@ -203,6 +208,7 @@ while keepGoing:
 					t.Thread(target=perso.move, args=("right",)).start()
 				if event.key == K_a:
 					t.Thread(target=perso.arm).start()
+					perso.arm_sound.play()
 				if event.key == K_z:
 					if not perso.attacking and not perso.moving: 
 						t.Thread(target=perso.Attack, args=("top",)).start()
@@ -264,6 +270,7 @@ while keepGoing:
 					t.Thread(target=perso.move, args=("right",)).start()
 				if event.key == K_a:
 					t.Thread(target=perso.arm).start()
+					perso.arm_sound.play()
 				if event.key == K_z:
 					if not perso.attacking and not perso.moving: 
 						t.Thread(target=perso.Attack, args=("top",)).start()
@@ -303,11 +310,12 @@ while keepGoing:
 				if i % num == 0:
 					perso.stamina += 1 if perso.stamina < 5 else 0
 					t.Thread(target=level4.badguy.Attack).start()
-	while level2.loop and perso.alive:
+	pygame.mixer.music.set_volume(0.8)
+	while level5.loop and perso.alive:
 		for event in pygame.event.get():
-			num = random.randint(1, 15 - level2.badguy.rank)
+			num = random.randint(1, 10)
 			if event.type == QUIT:
-				for mob in level2.mob:
+				for mob in level5.mob:
 					mob.alive = False
 				keepGoing = False
 				perso.alive = False
@@ -325,6 +333,8 @@ while keepGoing:
 					t.Thread(target=perso.move, args=("right",)).start()
 				if event.key == K_a:
 					t.Thread(target=perso.arm).start()
+					perso.arm_sound.play()
+
 				if event.key == K_z:
 					if not perso.attacking and not perso.moving: 
 						t.Thread(target=perso.Attack, args=("top",)).start()
@@ -363,5 +373,5 @@ while keepGoing:
 				time.sleep(0.2)
 				if i % num == 0:
 					perso.stamina += 1 if perso.stamina < 5 else 0
-					t.Thread(target=level2.badguy.Attack).start()
+					t.Thread(target=level5.badguy.scan).start()
 	break
