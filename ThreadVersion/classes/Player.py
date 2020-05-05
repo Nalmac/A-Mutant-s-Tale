@@ -5,6 +5,7 @@ pygame.init()
 import classes.constants as c
 import classes.Weapon as w
 import time
+import multiprocessing as m
 import threading as t
 
 class Player():
@@ -18,7 +19,7 @@ class Player():
 		self.attack = c.ATTACK
 		self.stamina = c.STAMINA
 		self.exp = 0
-		self.exp_level = 1
+		self.exp_level = 4 
 		self.kills = 0
 		self.armed = False
 		self.alive = True
@@ -82,6 +83,7 @@ class Player():
 
 
 	def ult(self):
+		self.arm_sound.stop()
 		self.ult_sound.play()
 		if self.exp_level >= 4:
 			if self.level.time:
@@ -377,7 +379,6 @@ class BadGuy(Player):
 		self.case_y = 15
 		self.rect = self.current_sprite.get_rect().move(self.case_x * c.SPRITE_SIZE, self.case_y * c.SPRITE_SIZE)
 		self.weapon = w.BossWeapon(self, self.player)
-		print(self.weapon.x, self.weapon.y)
 		self.stamina = c.B_STAMINA
 		self.attack = c.B_ATTACK
 		self.health = c.B_HEALTH

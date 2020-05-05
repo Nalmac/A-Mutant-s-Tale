@@ -373,5 +373,6 @@ while keepGoing:
 				time.sleep(0.2)
 				if i % num == 0:
 					perso.stamina += 1 if perso.stamina < 5 else 0
-					t.Thread(target=level5.badguy.scan).start()
+					t.Thread(target=level5.badguy.move).start()
+				t.Thread(target=level5.badguy.move).start()
 	break

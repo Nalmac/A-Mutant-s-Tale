@@ -81,7 +81,6 @@ class Level():
 						self.window.blit(self.tree, (x, y))
 					if case == "P":
 						self.portalRect == self.portalRect.move(x, y)
-						print(x, y)
 						if not self.badguy.alive:
 							self.window.blit(self.portal, self.portalRect)
 

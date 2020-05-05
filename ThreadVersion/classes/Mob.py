@@ -102,8 +102,6 @@ class Officer(Mob):
             delta_x = (c.SPRITE_SIZE * (self.target.case_x - self.case_x)) - (error / self.rank)
             delta_y = (c.SPRITE_SIZE * (self.target.case_y - self.case_y)) - (error / self.rank)
 
-            print(delta_x)
-            print(delta_y)
             self.current_sprite = self.sprites[0] if delta_x > 0 else self.sprites[1]
             self.case_x += delta_x / c.SPRITE_SIZE
             self.case_y += delta_y / c.SPRITE_SIZE

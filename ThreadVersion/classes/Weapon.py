@@ -81,7 +81,6 @@ class Weapon():
 		if self.player.exp >= 20:
 			self.player.exp_level += 1
 			self.player.exp = 0 if self.player.exp == 20 else self.player.exp - 20
-			print(self.player.exp_level)
 
 		delta_y = c.SPRITE_SIZE * (self.player.case_y - self.case_y) 		
 		delta_x = c.SPRITE_SIZE * (self.player.case_x - self.case_x)
@@ -153,8 +152,6 @@ class BossWeapon(Weapon):
 
 				if self.rect.colliderect(self.target.rect):
 					self.target.damage(self.boss.attack)
-					print(self.target.health)
-					print("attack")
 					break
 
 			delta_y = c.SPRITE_SIZE * (self.boss.case_y - self.case_y) 		
