@@ -19,7 +19,7 @@ class Player():
 		self.attack = c.ATTACK
 		self.stamina = c.STAMINA
 		self.exp = 0
-		self.exp_level = 4 
+		self.exp_level = 1 
 		self.kills = 0
 		self.armed = False
 		self.alive = True
